@@ -1,0 +1,735 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#a72e39">
+  <title>A little birthday surprise ♥</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --red: #a72e39;
+      --deep-red: #74232d;
+      --pink: #f2a0a6;
+      --pale-pink: #ffe2df;
+      --cream: #fff7e8;
+      --ink: #57252a;
+      --shadow: 0 12px 30px #74232d24;
+      --hand: "Comic Sans MS", "Chalkboard SE", "Bradley Hand", cursive;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      font-family: var(--hand);
+      background-color: #fff0ed;
+      background-image:
+        linear-gradient(90deg, #c73f4b24 50%, transparent 50%),
+        linear-gradient(#c73f4b24 50%, transparent 50%);
+      background-size: 44px 44px;
+      background-position: 0 0, 0 0;
+    }
+
+    button, input, textarea { font: inherit; }
+    button { color: inherit; }
+
+    .site-shell {
+      width: min(100% - 28px, 1020px);
+      min-height: 100svh;
+      margin: 0 auto;
+      padding: 18px 0 30px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .topline {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      color: var(--deep-red);
+      font-size: .95rem;
+      font-weight: 900;
+      letter-spacing: .04em;
+    }
+
+    .tiny-brand { transform: rotate(-3deg); }
+    .progress { opacity: .8; }
+
+    main {
+      display: grid;
+      place-items: center;
+      flex: 1;
+      width: 100%;
+    }
+
+    .page {
+      display: none;
+      width: 100%;
+      animation: pop-in .35s ease both;
+    }
+    .page.active { display: block !important; }
+
+    .card {
+      position: relative;
+      width: min(100%, 760px);
+      margin: 0 auto;
+      padding: clamp(24px, 5vw, 52px);
+      overflow: hidden;
+      text-align: center;
+      border: 2px solid #fffdf5;
+      border-radius: 30px;
+      background: var(--cream);
+      box-shadow: var(--shadow);
+    }
+
+    .card::before, .card::after {
+      position: absolute;
+      width: 88px;
+      height: 23px;
+      content: "";
+      background: #e9a1a0a8;
+      transform: rotate(-35deg);
+      pointer-events: none;
+    }
+    .card::before { top: 17px; left: -24px; }
+    .card::after { right: -24px; bottom: 17px; transform: rotate(-35deg); }
+
+    .eyebrow {
+      margin: 0 0 8px;
+      color: #b94a51;
+      font-size: .9rem;
+      font-weight: 900;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+    }
+
+    h1, h2, p { position: relative; z-index: 1; }
+    h1, h2 {
+      margin: 0 auto 16px;
+      color: var(--deep-red);
+      font-weight: 1000;
+      line-height: 1.08;
+      text-wrap: balance;
+    }
+    h1 { font-size: clamp(2.1rem, 8vw, 4.7rem); }
+    h2 { font-size: clamp(1.8rem, 6vw, 3.4rem); }
+    p { font-size: clamp(1rem, 2.8vw, 1.25rem); line-height: 1.5; }
+
+    .sticker {
+      display: inline-grid;
+      place-items: center;
+      width: 105px;
+      height: 105px;
+      margin: 4px auto 16px;
+      border: 3px solid white;
+      border-radius: 50%;
+      background: #ffd1d1;
+      box-shadow: 0 5px 0 #e69b9c, 0 8px 12px #75232c1c;
+      font-size: 4.3rem;
+      transform: rotate(-7deg);
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    .btn {
+      min-height: 48px;
+      padding: 12px 22px;
+      border: 2px solid var(--deep-red);
+      border-radius: 999px;
+      background: var(--red);
+      box-shadow: 0 5px 0 var(--deep-red);
+      color: white;
+      cursor: pointer;
+      font-weight: 1000;
+      letter-spacing: .04em;
+      transition: transform .15s, box-shadow .15s, background .15s;
+    }
+    .btn:hover {
+      transform: translateY(-2px) rotate(-1deg);
+      box-shadow: 0 7px 0 var(--deep-red);
+    }
+    .btn:active { transform: translateY(3px); box-shadow: 0 2px 0 var(--deep-red); }
+    .btn.secondary { background: #fff2eb; color: var(--deep-red); }
+    .btn.small { min-height: 40px; padding: 9px 16px; font-size: .93rem; }
+
+    .floating {
+      position: absolute;
+      z-index: 0;
+      color: #d0505d;
+      font-size: 1.6rem;
+      animation: bob 2.4s ease-in-out infinite;
+    }
+    .f1 { top: 12%; left: 8%; transform: rotate(-15deg); }
+    .f2 { top: 20%; right: 9%; animation-delay: .4s; }
+    .f3 { bottom: 12%; left: 12%; animation-delay: .8s; }
+    .f4 { right: 11%; bottom: 13%; animation-delay: 1.2s; }
+
+    .gift-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin: 24px 0 8px;
+    }
+    .gift {
+      min-height: 150px;
+      padding: 18px 10px;
+      border: 2px dashed #d88a88;
+      border-radius: 20px;
+      background: #fff0e8;
+      cursor: pointer;
+      font-weight: 900;
+      transition: transform .2s, background .2s;
+    }
+    .gift:hover { transform: translateY(-5px) rotate(-2deg); background: #ffe0dc; }
+    .gift span { display: block; margin-bottom: 9px; font-size: 3.2rem; }
+
+    .photo-frame {
+      width: min(100%, 340px);
+      aspect-ratio: 4 / 4.7;
+      margin: 18px auto;
+      padding: 12px 12px 38px;
+      border: 1px solid #ecd8c7;
+      background: white;
+      box-shadow: 0 8px 16px #63302825;
+      transform: rotate(-2deg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .photo-frame img, .memory-tile img, .gallery-tile img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      border-radius: 4px;
+    }
+
+    .letter-editor {
+      width: 100%;
+      border: 2px dashed #d88a88;
+      border-radius: 14px;
+      background: #fffdf5;
+      color: var(--deep-red);
+      font: inherit;
+      display: block;
+      min-height: 330px;
+      margin: 20px auto 10px;
+      padding: 24px;
+      resize: vertical;
+      text-align: left;
+      line-height: 1.85;
+      box-shadow: inset 0 0 18px #9a3e3310;
+      max-height: 55vh;
+      overflow: auto;
+      white-space: pre-line;
+    }
+
+    .cake {
+      position: relative;
+      width: min(100%, 350px);
+      height: 255px;
+      margin: 35px auto 10px;
+    }
+    .cake-layer {
+      position: absolute;
+      left: 10%;
+      width: 80%;
+      border: 4px solid #9a3940;
+      border-radius: 18px 18px 22px 22px;
+      background: #f3a5a2;
+      box-shadow: inset 0 -12px #de777d;
+    }
+    .cake-layer.bottom { bottom: 15px; height: 88px; }
+    .cake-layer.top {
+      bottom: 92px;
+      left: 18%;
+      width: 64%;
+      height: 75px;
+      background: #ffd2b8;
+      box-shadow: inset 0 -10px #f4a9a0;
+    }
+    .icing {
+      position: absolute;
+      top: -4px;
+      left: -4px;
+      width: calc(100% + 8px);
+      height: 25px;
+      border: 4px solid #9a3940;
+      border-radius: 18px 18px 14px 14px;
+      background: #fff1d9;
+    }
+    .candle-row {
+      position: absolute;
+      z-index: 2;
+      top: 13px;
+      left: 50%;
+      display: flex;
+      gap: 20px;
+      transform: translateX(-50%);
+    }
+    .candle {
+      position: relative;
+      width: 14px;
+      height: 66px;
+      border: 2px solid #a95053;
+      border-radius: 5px;
+      background: repeating-linear-gradient(135deg, #fff4d8 0 7px, #e66c79 7px 13px);
+    }
+    .flame {
+      position: absolute;
+      top: -23px;
+      left: 1px;
+      width: 9px;
+      height: 17px;
+      border-radius: 70% 30% 60% 40%;
+      background: #ffba43;
+      box-shadow: 0 0 15px #ffae36;
+      animation: flicker .5s ease-in-out infinite alternate;
+    }
+    .blown .flame { display: none; }
+
+    .memory-grid, .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin: 22px 0 12px;
+    }
+    .memory-tile {
+      aspect-ratio: 1;
+      padding: 7px 7px 18px;
+      background: #fff;
+      box-shadow: 0 5px 12px #63302822;
+      overflow: hidden;
+    }
+    .memory-tile:nth-child(odd) { transform: rotate(-3deg); }
+    .memory-tile:nth-child(even) { transform: rotate(3deg); }
+
+    .ransom-title {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 3px;
+      margin: 0 auto 14px;
+    }
+    .ransom-title span {
+      padding: 4px 7px;
+      color: #76232c;
+      background: #f3cfb5;
+      font: 1000 clamp(1.35rem, 5vw, 2.7rem)/1.1 var(--hand);
+      transform: rotate(-2deg);
+    }
+    .ransom-title span:nth-child(2n) { background: #f4a6a7; transform: rotate(3deg); }
+
+    .game-area {
+      min-height: 180px;
+      margin: 18px 0;
+      padding: 20px;
+      border: 2px dashed #d88a88;
+      border-radius: 20px;
+      background: #fff0e8;
+    }
+    .tap-heart {
+      min-width: 62px;
+      min-height: 62px;
+      margin: 8px;
+      border: 0;
+      background: transparent;
+      cursor: pointer;
+      font-size: 3rem;
+      transition: transform .15s;
+    }
+    .tap-heart:hover { transform: scale(1.25) rotate(10deg); }
+    .score { color: var(--red); font-weight: 1000; }
+
+    .gallery-tile {
+      position: relative;
+      aspect-ratio: 1;
+      padding: 6px;
+      border: 2px solid white;
+      border-radius: 12px;
+      background: #f5d2c0;
+      box-shadow: 0 5px 12px #63302822;
+      transform: rotate(var(--tilt, 0deg));
+      overflow: hidden;
+    }
+    .gallery-tile:nth-child(3n) { --tilt: 2deg; }
+    .gallery-tile:nth-child(3n + 1) { --tilt: -2deg; }
+
+    .wish-note {
+      width: min(100%, 480px);
+      margin: 20px auto;
+      padding: 24px;
+      border-radius: 18px;
+      background: #fff2d6;
+      box-shadow: 0 7px 15px #63302820;
+      transform: rotate(-1deg);
+      font-size: clamp(1.15rem, 4vw, 1.7rem);
+      font-weight: 900;
+    }
+
+    .footer-note {
+      margin: 16px 0 0;
+      color: #8d4a4b;
+      font-size: .85rem;
+      text-align: center;
+    }
+
+    @keyframes pop-in {
+      from { opacity: 0; transform: translateY(9px) scale(.98); }
+      to { opacity: 1; transform: none; }
+    }
+    @keyframes bob { 50% { translate: 0 -8px; } }
+    @keyframes flicker { to { transform: rotate(9deg) scale(.88); } }
+    @keyframes burst {
+      to { transform: translate(var(--dx), var(--dy)) rotate(360deg); opacity: 0; }
+    }
+
+    @media (max-width: 560px) {
+      .site-shell { width: min(100% - 18px, 1020px); padding-top: 12px; }
+      .card { padding: 28px 18px; border-radius: 23px; }
+      .gift-grid { gap: 7px; }
+      .gift { min-height: 125px; padding: 12px 5px; font-size: .85rem; }
+      .gift span { font-size: 2.7rem; }
+      .memory-grid, .gallery-grid { gap: 7px; }
+      .memory-tile { padding: 4px 4px 12px; }
+      .letter-editor { min-height: 290px; padding: 18px; }
+      .f1 { left: 4%; }
+      .f2 { right: 4%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="site-shell">
+    <header class="topline">
+      <span class="tiny-brand">♥ a little love for you ♥</span>
+      <span class="progress" id="progress">1 / 12</span>
+    </header>
+
+    <main>
+      <!-- Page 1 -->
+      <section class="page active" id="page-1">
+        <article class="card">
+          <span class="floating f1">♥</span><span class="floating f2">✦</span>
+          <span class="floating f3">♥</span><span class="floating f4">✧</span>
+          <div class="sticker" aria-hidden="true">🐻</div>
+          <p class="eyebrow">psst... I made you something</p>
+          <h1>I have made something for you cutttuuu.<br>Do you wanna see it?</h1>
+          <div class="actions">
+            <button class="btn" data-go="3">YES, PLEASE!</button>
+            <button class="btn secondary" data-go="2">NAHI DKHTI HUH!! 🙈</button>
+          </div>
+        </article>
+      </section>
+
+      <!-- Page 2 -->
+      <section class="page" id="page-2">
+        <article class="card">
+          <div class="sticker" aria-hidden="true">😾</div>
+          <p class="eyebrow">AYIII BHONDU?!</p>
+          <h1>HOW DARE YOU!?</h1>
+          <p>That button was clearly a test. Try again, birthday girl! 💢</p>
+          <div class="actions"><button class="btn" data-go="1">TRY AGAIN</button></div>
+        </article>
+      </section>
+
+      <!-- Page 3 -->
+      <section class="page" id="page-3">
+        <article class="card">
+          <div class="sticker" aria-hidden="true">🥰</div>
+          <p class="eyebrow">one very important question</p>
+          <h1>Are you really excited?</h1>
+          <p>Choose wisely... both answers are YES 💌</p>
+          <div class="actions">
+            <button class="btn" data-go="4">YES!!</button>
+            <button class="btn secondary" data-go="4">YES, OBVIOUSLY!</button>
+          </div>
+        </article>
+      </section>
+
+      <!-- Page 4 -->
+      <section class="page" id="page-4">
+        <article class="card">
+          <p class="eyebrow">your little birthday treasure chest</p>
+          <h1>Each gift has something for you...</h1>
+          <p>Open them! There's love in every one. 💝</p>
+          <div class="gift-grid">
+            <button class="gift" data-go="5"><span aria-hidden="true">🎁</span>Gift one</button>
+            <button class="gift" data-go="6"><span aria-hidden="true">🎁</span>Gift two</button>
+            <button class="gift" data-go="7"><span aria-hidden="true">🎁</span>Gift three</button>
+          </div>
+          <p class="eyebrow">CLICK ON THE GIFTS ✨</p>
+          <div class="actions">
+            <button class="btn secondary small" data-go="8">A letter for you 💌</button>
+          </div>
+        </article>
+      </section>
+
+      <!-- Page 5: Birthday Photo -->
+      <section class="page" id="page-5">
+        <article class="card">
+          <p class="eyebrow">today is all about you</p>
+          <h1>Happy Birthday, Gunnuu!</h1>
+          <p>To my favorite person in the whole world. 🎀</p>
+          <div class="photo-frame">
+            <img src="Screenshot_20261030_230144_Gallery.jpg" alt="Birthday Photo" onerror="this.src='https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80'">
+          </div>
+          <div class="actions">
+            <button class="btn secondary" data-go="4">← Back to gifts</button>
+          </div>
+        </article>
+      </section>
+
+      <!-- Page 6: Cake -->
+      <section class="page" id="page-6">
+        <article class="card">
+          <p class="eyebrow">make a little birthday magic</p>
+          <h1>MAKE A WISH</h1>
+          <p>Close your eyes, make your wish, then blow out the candles!</p>
+          <div class="cake" id="cake">
+            <div class="candle-row">
+              <span class="candle"><i class="flame"></i></span>
+              <span class="candle"><i class="flame"></i></span>
+              <span class="candle"><i class="flame"></i></span>
+              <span class="candle"><i class="flame"></i></span>
+              <span class="candle"><i class="flame"></i></span>
+            </div>
+            <div class="cake-layer top"><i class="icing"></i></div>
+            <div class="cake-layer bottom"><i class="icing"></i></div>
+          </div>
+          <p id="wish-message">Ready? Make it a good one! 🕯️</p>
+          <div class="actions">
+            <button class="btn" id="blow-button">I MADE A WISH! ✨</button>
+            <button class="btn secondary" data-go="4">← Back to gifts</button>
+          </div>
+        </article>
+      </section>
+
+      <!-- Page 7: Memories -->
+      <section class="page" id="page-7">
+        <article class="card">
+          <p class="eyebrow">little moments, big feelings</p>
+          <div class="ransom-title">
+            <span>M</span><span>E</span><span>M</span><span>O</span>
+            <span>R</span><span>I</span><span>E</span><span>S</span>
+          </div>
+          <p>Our favorite snapshots belong right here. 📷</p>
+          <div class="memory-grid">
+            <div class="memory-tile"><img src="20261019_183738.jpg" alt="Memory 1" onerror="this.src='https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=400&q=80'"></div>
+            <div class="memory-tile"><img src="Screenshot_20261030_230619_Gallery.jpg" alt="Memory 2" onerror="this.src='https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?auto=format&fit=crop&w=400&q=80'"></div>
+            <div class="memory-tile"><img src="Screenshot_20261030_230641_Gallery.jpg" alt="Memory 3" onerror="this.src='https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=400&q=80'"></div>
+          </div>
+          <div class="actions">
+            <button class="btn small" data-go="8">Read your letter 💌</button>
+            <button class="btn secondary small" data-go="4">← Back to gifts</button>
+          </div>
+        </article>
+      </section>
+
+      <!-- Page 8: Letter -->
+      <section class="page" id="page-8">
+        <article class="card">
+          <p class="eyebrow">folded with all my love</p>
+          <h1>A little love letter 💌</h1>
+          
+          <div class="letter-editor" style="white-space: pre-line; text-align: left; padding: 24px; min-height: 330px; max-height: 55vh; overflow: auto; border: 2px dashed #d88a88; border-radius: 14px; background: #fffdf5; color: var(--deep-red); line-height: 1.85;">
+Pyari cuttu puttu🎀,
+Happy Birthday / Level up dayyy🎂
+Don't have much to say but kuch kuch bolna chahunga......                                                                                                                                                                                                                                 You are Sweet Soul, caring,lovinggg, sweet cheeks, always there, true partner and my love, and I'm so grateful to have you in my life.
+You bring so much warmth and sweetness into my life causeee youuu areeee myyyy cutttuuuu puttuuuu. Every moment with you is precious jaise khinoorrr.
+On thiss special day, I wish you all the happiness, love,success, and joy that you deserve. May we create more countless beautiful moments and wonderful memories.
+Youuu stayyy humesha khush aaise hi khush raho tension nako lene ka pyaar karte rehne ka and sundoorrr sundoorrr banke tarsate rehne ka 🌝💗
+We missed iss saal ka bday celebration but koi nai hopes ki infuture we celebrate bdaysss together my love❤️ 
+
+With lotssss of love and best wishes, 
+Happyyyyyy Birthdayyyy Gunanshi (aka Gunnu, Gungun, sweet cheeks, cuttu puttuu, peshal)❤️                                                                                                                                                                                                                                    
+Your chotu bby💝 ♥
+          </div>
+
+          <div class="actions">
+            <button class="btn secondary" data-go="4">← Back to gifts</button>
+            <button class="btn" data-go="9">Continue to your birthday wish →</button>
+          </div>
+        </article>
+      </section>
+
+      <!-- Page 9 -->
+      <section class="page" id="page-9">
+        <article class="card">
+          <span class="floating f1">✦</span><span class="floating f2">♥</span>
+          <span class="floating f3">✧</span><span class="floating f4">♥</span>
+          <div class="sticker" aria-hidden="true">💐</div>
+          <p class="eyebrow">one last birthday wish</p>
+          <h1>May all the good things you've been waiting for finally find you this year ♥</h1>
+          <p>You deserve every bit of happiness coming your way.</p>
+          <div class="actions">
+            <button class="btn" data-go="10">One more surprise! 🎉</button>
+            <button class="btn secondary" data-go="4">Visit the gifts again</button>
+          </div>
+        </article>
+      </section>
+
+      <!-- Page 10: Game -->
+      <section class="page" id="page-10">
+        <article class="card">
+          <p class="eyebrow">a tiny birthday game</p>
+          <h1>Catch the hearts! 💕</h1>
+          <p>Tap the hearts before the timer runs out. Ready, set, love!</p>
+          <div class="game-area">
+            <div><span class="score">Score: <span id="score">0</span></span> &nbsp;·&nbsp; <span class="score" id="timer">10</span> seconds</div>
+            <div id="heart-buttons"></div>
+            <p id="game-message">Tap start when you're ready!</p>
+          </div>
+          <div class="actions">
+            <button class="btn" id="start-game">START GAME</button>
+            <button class="btn secondary" data-go="11">Next surprise →</button>
+          </div>
+        </article>
+      </section>
+
+      <!-- Page 11: Gallery -->
+      <section class="page" id="page-11">
+        <article class="card">
+          <p class="eyebrow">the world's cutest face deserves a gallery</p>
+          <h1>A little gallery of you 📷</h1>
+          <p>Some of my favorite photos of you.</p>
+          <div class="gallery-grid">
+            <div class="gallery-tile"><img src="Screenshot_20261030_230212_Gallery.jpg" alt="Gallery 1" onerror="this.src='https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80'"></div>
+            <div class="gallery-tile"><img src="Screenshot_20261030_230423_Gallery.jpg" alt="Gallery 2" onerror="this.src='https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=400&q=80'"></div>
+            <div class="gallery-tile"><img src="Screenshot_20261030_230559_Gallery.jpg" alt="Gallery 3" onerror="this.src='https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?auto=format&fit=crop&w=400&q=80'"></div>
+            <div class="gallery-tile"><img src="Screenshot_20261030_230634_Gallery.jpg" alt="Gallery 4" onerror="this.src='https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=400&q=80'"></div>
+            <div class="gallery-tile"><img src="20261019_161515.jpg" alt="Gallery 5" onerror="this.src='https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80'"></div>
+            <div class="gallery-tile">
+  <img src="Screenshot_20261030_230731_Gallery.jpg" alt="Gallery 6" style="object-fit: contain; background: #fff;" onerror="this.src='https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=400&q=80'">
+</div>
+          <div class="actions">
+            <button class="btn" data-go="12">The last surprise →</button>
+          </div>
+        </article>
+      </section>
+
+      <!-- Page 12: Final Wish -->
+      <section class="page" id="page-12">
+        <article class="card">
+          <div class="sticker" aria-hidden="true">🎁</div>
+          <p class="eyebrow">okay, the very last one...</p>
+          <h1>A surprise, just for you!</h1>
+          <p>There's one more thing I hope you never forget:</p>
+          <div class="wish-note">You are loved more than all the stars in the sky. Happy birthday,Gunnuu! ♥</div>
+          <div class="actions">
+            <button class="btn" id="confetti-button">MAKE IT SPARKLE ✨</button>
+            <button class="btn secondary" data-go="1">Start the surprise again ↺</button>
+          </div>
+        </article>
+      </section>
+    </main>
+
+    <p class="footer-note">Made with extra sprinkles & lots of love ♥</p>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const pages = Array.from(document.querySelectorAll(".page"));
+      const progress = document.getElementById("progress");
+
+      function showPage(number) {
+        pages.forEach((page) => page.classList.remove("active"));
+        const target = document.getElementById("page-" + number);
+        if (target) {
+          target.classList.add("active");
+          if(progress) progress.textContent = number + " / " + pages.length;
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+      }
+
+      document.body.addEventListener("click", (e) => {
+        const btn = e.target.closest("[data-go]");
+        if (btn) {
+          e.preventDefault();
+          const targetPage = btn.getAttribute("data-go");
+          showPage(targetPage);
+        }
+      });
+
+      const blowBtn = document.getElementById("blow-button");
+      if(blowBtn) {
+        blowBtn.addEventListener("click", () => {
+          document.getElementById("cake").classList.add("blown");
+          document.getElementById("wish-message").textContent = "Wish sent to the universe! May it come true 💫";
+          blowBtn.textContent = "WISH SENT! 💫";
+          blowBtn.disabled = true;
+        });
+      }
+
+      let gameInterval;
+      const startBtn = document.getElementById("start-game");
+      if(startBtn) {
+        startBtn.addEventListener("click", () => {
+          clearInterval(gameInterval);
+          let score = 0;
+          let seconds = 10;
+          document.getElementById("score").textContent = score;
+          document.getElementById("timer").textContent = seconds;
+          document.getElementById("game-message").textContent = "Go go go! 💗";
+
+          const heartContainer = document.getElementById("heart-buttons");
+          heartContainer.innerHTML = "";
+
+          for(let i = 0; i < 5; i++) {
+            const h = document.createElement("button");
+            h.type = "button";
+            h.className = "tap-heart";
+            h.textContent = ["💖", "💗", "💕", "💘", "💝"][i];
+            h.onclick = () => {
+              if(seconds > 0) {
+                score++;
+                document.getElementById("score").textContent = score;
+                h.textContent = ["💗", "💖", "💘", "💝"][Math.floor(Math.random()*4)];
+              }
+            };
+            heartContainer.appendChild(h);
+          }
+
+          startBtn.disabled = true;
+          gameInterval = setInterval(() => {
+            seconds--;
+            document.getElementById("timer").textContent = seconds;
+            if(seconds <= 0) {
+              clearInterval(gameInterval);
+              startBtn.disabled = false;
+              document.getElementById("game-message").textContent = "You caught " + score + " hearts! That's a whole lot of love! 💞";
+            }
+          }, 1000);
+        });
+      }
+
+      const confettiBtn = document.getElementById("confetti-button");
+      if(confettiBtn) {
+        confettiBtn.addEventListener("click", () => {
+          const card = document.querySelector("#page-12 .card");
+          const colors = ["#d94c5b", "#f0a1a5", "#f5c354", "#fff4d6", "#a8669b"];
+          for (let i = 0; i < 40; i++) {
+            const piece = document.createElement("span");
+            piece.textContent = Math.random() > 0.5 ? "♥" : "✦";
+            piece.style.cssText = "position:absolute;z-index:3;left:50%;top:55%;color:" + colors[i%colors.length] + ";font-size:" + (12+Math.random()*18) + "px;--dx:" + (Math.random()*440-220) + "px;--dy:" + (Math.random()*-390-40) + "px;animation:burst " + (1+Math.random()*1.3) + "s ease-out forwards;pointer-events:none";
+            card.appendChild(piece);
+            setTimeout(() => piece.remove(), 2500);
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>
